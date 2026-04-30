@@ -1,1 +1,18 @@
-{"nbformat":4,"nbformat_minor":0,"metadata":{"colab":{"provenance":[],"authorship_tag":"ABX9TyPjbYG9fnJpBA6LlMOV4+0h"},"kernelspec":{"name":"python3","display_name":"Python 3"},"language_info":{"name":"python"}},"cells":[{"cell_type":"code","metadata":{"colab":{"base_uri":"https://localhost:8080/"},"id":"0e6e978d","executionInfo":{"status":"ok","timestamp":1777536874600,"user_tz":-330,"elapsed":12,"user":{"displayName":"yash","userId":"18346286857860489222"}},"outputId":"9b635550-5377-46c9-93a1-37860439b815"},"source":["from sklearn.linear_model import LinearRegression\n","import joblib\n","\n","# Create a simple dummy model\n","dummy_model = LinearRegression()\n","\n","# Save the dummy model to 'model.pkl'\n","joblib.dump(dummy_model, 'model.pkl')\n","\n","print(\"Dummy 'model.pkl' created successfully.\")"],"execution_count":8,"outputs":[{"output_type":"stream","name":"stdout","text":["Dummy 'model.pkl' created successfully.\n"]}]}]}
+from flask import Flask, request, jsonify
+import joblib
+import numpy as np
+
+app = Flask(__name__)
+model = joblib.load("model.pkl")
+
+@app.route("/")
+def home():
+    return "Model is running 🚀"
+
+@app.route("/predict", methods=["POST"])
+def predict():
+    data = request.get_json()
+    input_data = np.array(data["input"]).reshape(1, -1)
+    prediction = model.predict(input_data)
+
+    return jsonify({"prediction": prediction.tolist()})
